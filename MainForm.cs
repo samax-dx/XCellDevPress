@@ -7,8 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
-using System;
+using System.Text.Json;
 
 
 namespace XCellDevPress
@@ -20,9 +19,16 @@ namespace XCellDevPress
             InitializeComponent();
         }
 
-        private void spreadsheetControl1_CellValueChanged(object sender, DevExpress.XtraSpreadsheet.SpreadsheetCellEventArgs e)
+        private void onSheetA_CellValueChanged(object sender, DevExpress.XtraSpreadsheet.SpreadsheetCellEventArgs e)
         {
-            MainConsole.Text = String.Format("[previous value: {0}] [current value: {1}]", e.OldValue, e.Value);
+            var docB = SheetB.Document.Worksheets[0];
+            var cellB = docB[e.Cell.RowIndex, e.Cell.ColumnIndex];
+            cellB.SetValue(e.Value.ToObject());
+        }
+
+        private void onMainWindow_Shown(object sender, EventArgs e)
+        {
+            MainConsole.Text = JsonSerializer.Serialize(new { id = "a13sde", name = "shabbir" });
         }
     }
 }
