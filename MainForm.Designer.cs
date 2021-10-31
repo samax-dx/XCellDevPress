@@ -63,7 +63,6 @@ namespace XCellDevPress
             this.MainNav.Name = "MainNav";
             this.MainNav.Size = new System.Drawing.Size(207, 426);
             this.MainNav.TabIndex = 3;
-            this.MainNav.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.MainNav_AfterSelect);
             // 
             // MainWindow
             // 

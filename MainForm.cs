@@ -35,18 +35,26 @@ namespace XCellDevPress
             product.Nodes.Add("Search");
             product.Nodes.Add("List");
             product.Nodes.Add("Edit");
+            MainNav.AfterSelect += (snd, ev) => {
+                if (ev.Node.Text == "Product" || ev.Node.Parent.Text == "Product") openCode("Product");
+            };
+            var category = components.Nodes.Add("Category");
+            category.Nodes.Add("Search");
+            category.Nodes.Add("List");
+            category.Nodes.Add("Edit");
+            MainNav.AfterSelect += (snd, ev) => {
+                if (ev.Node.Text == "Category" || ev.Node.Parent.Text == "Category") openCode("Category");
+            };
             MainNav.ExpandAll();
         }
 
-        private void MainNav_AfterSelect(object sender, TreeViewEventArgs e)
+        private void openCode(string fileName)
         {
-            if (e.Node.Parent.Text != "Product") return;
-
             var executablePath = Path.GetDirectoryName(Application.ExecutablePath);
 
             var process = new Process();
             process.StartInfo.FileName = "code";
-            process.StartInfo.Arguments = String.Format("{0}/product.js", executablePath);
+            process.StartInfo.Arguments = String.Format("{0}/{1}.js", executablePath, fileName);
             process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
             process.Start();
         }
