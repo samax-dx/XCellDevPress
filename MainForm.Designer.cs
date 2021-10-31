@@ -31,37 +31,39 @@ namespace XCellDevPress
         {
             this.SheetA = new DevExpress.XtraSpreadsheet.SpreadsheetControl();
             this.SheetB = new DevExpress.XtraSpreadsheet.SpreadsheetControl();
-            this.MainConsole = new System.Windows.Forms.TextBox();
+            this.MainNav = new System.Windows.Forms.TreeView();
             this.SuspendLayout();
             // 
             // SheetA
             // 
-            this.SheetA.Location = new System.Drawing.Point(12, 12);
+            this.SheetA.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.SheetA.Location = new System.Drawing.Point(225, 12);
             this.SheetA.Name = "SheetA";
-            this.SheetA.Size = new System.Drawing.Size(536, 208);
+            this.SheetA.Size = new System.Drawing.Size(563, 208);
             this.SheetA.TabIndex = 0;
             this.SheetA.Text = "spreadsheetControl1";
             this.SheetA.CellValueChanged += new DevExpress.XtraSpreadsheet.CellValueChangedEventHandler(this.onSheetA_CellValueChanged);
             // 
             // SheetB
             // 
-            this.SheetB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.SheetB.Location = new System.Drawing.Point(12, 226);
+            this.SheetB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.SheetB.Location = new System.Drawing.Point(225, 226);
             this.SheetB.Name = "SheetB";
-            this.SheetB.Size = new System.Drawing.Size(536, 212);
+            this.SheetB.Size = new System.Drawing.Size(563, 212);
             this.SheetB.TabIndex = 2;
             this.SheetB.Text = "spreadsheetControl1";
             // 
-            // MainConsole
+            // MainNav
             // 
-            this.MainConsole.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.MainConsole.Location = new System.Drawing.Point(554, 12);
-            this.MainConsole.Multiline = true;
-            this.MainConsole.Name = "MainConsole";
-            this.MainConsole.ReadOnly = true;
-            this.MainConsole.Size = new System.Drawing.Size(234, 426);
-            this.MainConsole.TabIndex = 1;
+            this.MainNav.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.MainNav.Location = new System.Drawing.Point(12, 12);
+            this.MainNav.Name = "MainNav";
+            this.MainNav.Size = new System.Drawing.Size(207, 426);
+            this.MainNav.TabIndex = 3;
+            this.MainNav.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.MainNav_AfterSelect);
             // 
             // MainWindow
             // 
@@ -69,13 +71,12 @@ namespace XCellDevPress
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.SheetB);
-            this.Controls.Add(this.MainConsole);
             this.Controls.Add(this.SheetA);
+            this.Controls.Add(this.MainNav);
             this.Name = "MainWindow";
             this.Text = "XCellDevPress";
-            this.Shown += new System.EventHandler(this.onMainWindow_Shown);
+            this.Load += new System.EventHandler(this.onMainWindow_Load);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -83,7 +84,7 @@ namespace XCellDevPress
 
         private DevExpress.XtraSpreadsheet.SpreadsheetControl SheetA;
         private DevExpress.XtraSpreadsheet.SpreadsheetControl SheetB;
-        private System.Windows.Forms.TextBox MainConsole;
+        private System.Windows.Forms.TreeView MainNav;
     }
 }
 
