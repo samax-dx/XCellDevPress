@@ -43,7 +43,7 @@ namespace XCellDevPress
             this.SheetA.Size = new System.Drawing.Size(563, 208);
             this.SheetA.TabIndex = 0;
             this.SheetA.Text = "spreadsheetControl1";
-            this.SheetA.CellValueChanged += new DevExpress.XtraSpreadsheet.CellValueChangedEventHandler(this.onSheetA_CellValueChanged);
+            this.SheetA.CellValueChanged += new DevExpress.XtraSpreadsheet.CellValueChangedEventHandler(this.SheetA_CellValueChanged);
             // 
             // SheetB
             // 
@@ -74,7 +74,7 @@ namespace XCellDevPress
             this.Controls.Add(this.MainNav);
             this.Name = "MainWindow";
             this.Text = "XCellDevPress";
-            this.Load += new System.EventHandler(this.onMainWindow_Load);
+            this.Load += new System.EventHandler(this.MainWindow_Load);
             this.ResumeLayout(false);
 
         }

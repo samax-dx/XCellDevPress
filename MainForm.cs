@@ -11,6 +11,9 @@ using System.Windows.Forms;
 using System.Text.Json;
 using System.Reflection;
 using System.Diagnostics;
+using Flurl;
+using Flurl.Http;
+using DevExpress.XtraSpreadsheet;
 
 namespace XCellDevPress
 {
@@ -21,14 +24,31 @@ namespace XCellDevPress
             InitializeComponent();
         }
 
-        private void onSheetA_CellValueChanged(object sender, DevExpress.XtraSpreadsheet.SpreadsheetCellEventArgs e)
+        private async Task<object> Evaluate(string[] methods, object args)
         {
-            var docB = SheetB.Document.Worksheets[0];
-            var cellB = docB[e.Cell.RowIndex, e.Cell.ColumnIndex];
-            cellB.SetValue(e.Value.ToObject());
+            var response = await "http://localhost:3005/eval".PostJsonAsync(new { methods, obj = args });
+            return await response.GetJsonAsync<object>();
         }
 
-        private void onMainWindow_Load(object sender, EventArgs e)
+        private void SetCellValue(SpreadsheetControl control, int x, int y, object value)
+        {
+            var worksheet = control.Document.Worksheets[0];
+            worksheet[x, y].SetValue(value);
+        }
+
+        private async void SheetA_CellValueChanged(object sender, DevExpress.XtraSpreadsheet.SpreadsheetCellEventArgs e)
+        {
+            SetCellValue(SheetB, e.Cell.RowIndex, e.Cell.ColumnIndex, e.Value.ToObject());
+
+            var result = await Evaluate(
+                new [] { "trim", "toUpper" },
+                new { nameContains = e.Value.ToString() }
+            );
+            SetCellValue(SheetA, e.Cell.RowIndex, e.Cell.ColumnIndex + 1, result.ToString());
+            SetCellValue(SheetB, e.Cell.RowIndex, e.Cell.ColumnIndex + 1, result.ToString());
+        }
+
+        private void MainWindow_Load(object sender, EventArgs e)
         {
             var components = MainNav.Nodes.Add("Components");
             var product = components.Nodes.Add("Product");
@@ -36,19 +56,19 @@ namespace XCellDevPress
             product.Nodes.Add("List");
             product.Nodes.Add("Edit");
             MainNav.AfterSelect += (snd, ev) => {
-                if (ev.Node.Text == "Product" || ev.Node.Parent.Text == "Product") openCode("Product");
+                if (ev.Node.Text == "Product" || ev.Node.Parent.Text == "Product") OpenCode("Product");
             };
             var category = components.Nodes.Add("Category");
             category.Nodes.Add("Search");
             category.Nodes.Add("List");
             category.Nodes.Add("Edit");
             MainNav.AfterSelect += (snd, ev) => {
-                if (ev.Node.Text == "Category" || ev.Node.Parent.Text == "Category") openCode("Category");
+                if (ev.Node.Text == "Category" || ev.Node.Parent.Text == "Category") OpenCode("Category");
             };
             MainNav.ExpandAll();
         }
 
-        private void openCode(string fileName)
+        private void OpenCode(string fileName)
         {
             var executablePath = Path.GetDirectoryName(Application.ExecutablePath);
 
