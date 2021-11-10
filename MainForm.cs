@@ -11,9 +11,8 @@ using System.Windows.Forms;
 using System.Text.Json;
 using System.Reflection;
 using System.Diagnostics;
-using Flurl;
 using Flurl.Http;
-using DevExpress.XtraSpreadsheet;
+using XCellDevPress.helpers;
 
 namespace XCellDevPress
 {
@@ -24,28 +23,53 @@ namespace XCellDevPress
             InitializeComponent();
         }
 
-        private async Task<object> Evaluate(string[] methods, object args)
+        private async Task<IDictionary<string, object>> Evaluate(dynamic evalData)
         {
-            var response = await "http://localhost:3005/eval".PostJsonAsync(new { methods, obj = args });
-            return await response.GetJsonAsync<object>();
+            var response = await "http://localhost:3005/eval".PostJsonAsync(new { methods = (string[])evalData.methods, data = (string)evalData.data });
+            return await response.GetJsonAsync<IDictionary<string, object>>();
         }
 
-        private void SetCellValue(SpreadsheetControl control, int x, int y, object value)
+        private void SetCellValue(DevExpress.XtraSpreadsheet.SpreadsheetControl control, int x, int y, object value)
         {
             var worksheet = control.Document.Worksheets[0];
             worksheet[x, y].SetValue(value);
         }
 
+        private object GetEvalData(string startCellRef)
+        {
+            var cellRange = SheetA.Document.Worksheets[0]
+                .Range
+                .Parse(String.Join(":", Enumerable.Repeat(startCellRef, 2)));
+
+            var callData = cellRange
+                .TakeWhile(cell => !cell.Value.IsEmpty)
+                .Select(cell => cell.Value.TextValue);
+
+            return new { methods = callData.Skip(1).ToArray(), data = callData.FirstOrDefault() };
+        }
+
+        private void SetEvalData(string startCellRef, IDictionary<string, object> data)
+        {
+            var startCell = SheetA.Document.Worksheets[0].Cells[startCellRef].ExitRight();
+
+            //var callData = data;
+                //.Select((item, i) => )
+                //.GetType()
+                //.GetRuntimeFields()
+                //.ToDictionary(k => k.Name, v => v.GetValue(data));
+
+            data.forEach((item, i) => startCell.ExitDown(i).SetValue(item.Value));
+        }
+
         private async void SheetA_CellValueChanged(object sender, DevExpress.XtraSpreadsheet.SpreadsheetCellEventArgs e)
         {
-            SetCellValue(SheetB, e.Cell.RowIndex, e.Cell.ColumnIndex, e.Value.ToObject());
+            SetCellValue(SheetB, e.Cell.RowIndex, e.Cell.ColumnIndex, e.Cell.Value.TextValue); // ignore this line
+            if (e.Cell.ColumnIndex > 0) return; // ignore this line
 
-            var result = await Evaluate(
-                new [] { "trim", "toUpper" },
-                new { nameContains = e.Value.ToString() }
-            );
-            SetCellValue(SheetA, e.Cell.RowIndex, e.Cell.ColumnIndex + 1, result.ToString());
-            SetCellValue(SheetB, e.Cell.RowIndex, e.Cell.ColumnIndex + 1, result.ToString());
+            var startCellRef = "A1";
+
+            var result = await Evaluate(GetEvalData(startCellRef));
+            SetEvalData(startCellRef, result);
         }
 
         private void MainWindow_Load(object sender, EventArgs e)
