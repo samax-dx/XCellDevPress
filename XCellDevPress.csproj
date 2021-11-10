@@ -135,7 +135,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="helpers\QDictionaryUtil.cs" />
-    <Compile Include="helpers\QStringUtil.cs" />
     <Compile Include="helpers\XSpreadsheedUtil.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>

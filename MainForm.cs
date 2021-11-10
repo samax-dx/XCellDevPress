@@ -23,9 +23,9 @@ namespace XCellDevPress
             InitializeComponent();
         }
 
-        private async Task<IDictionary<string, object>> Evaluate(dynamic evalData)
+        private async Task<IDictionary<string, object>> Evaluate(object evalData)
         {
-            var response = await "http://localhost:3005/eval".PostJsonAsync(new { methods = (string[])evalData.methods, data = (string)evalData.data });
+            var response = await "http://localhost:3005/eval".PostJsonAsync(evalData);
             return await response.GetJsonAsync<IDictionary<string, object>>();
         }
 
@@ -39,25 +39,21 @@ namespace XCellDevPress
         {
             var cellRange = SheetA.Document.Worksheets[0]
                 .Range
-                .Parse(String.Join(":", Enumerable.Repeat(startCellRef, 2)));
+                .Parse(string.Join(":", Enumerable.Repeat(startCellRef.Substring(0, 1), 2)));
 
             var callData = cellRange
                 .TakeWhile(cell => !cell.Value.IsEmpty)
-                .Select(cell => cell.Value.TextValue);
+                .Select(cell => cell.Value.TextValue)
+                .ToArray();
 
-            return new { methods = callData.Skip(1).ToArray(), data = callData.FirstOrDefault() };
+            var methods = callData.Skip(1).ToArray();
+
+            return new { methods = callData.Skip(1).ToArray(), data = callData.ElementAt(0) };
         }
 
         private void SetEvalData(string startCellRef, IDictionary<string, object> data)
         {
             var startCell = SheetA.Document.Worksheets[0].Cells[startCellRef].ExitRight();
-
-            //var callData = data;
-                //.Select((item, i) => )
-                //.GetType()
-                //.GetRuntimeFields()
-                //.ToDictionary(k => k.Name, v => v.GetValue(data));
-
             data.forEach((item, i) => startCell.ExitDown(i).SetValue(item.Value));
         }
 
